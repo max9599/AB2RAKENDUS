@@ -1,0 +1,12 @@
+version: '2'
+services:
+    toys-postgresql:
+        container_name: toys-postgresql
+        image: postgres:9.5.4
+        # volumes:
+        #     - ~/volumes/jhipster/Toys/postgresql/:/var/lib/postgresql/
+        environment:
+            - POSTGRES_USER=Toys
+            - POSTGRES_PASSWORD=
+        ports:
+            - 5432:5432
