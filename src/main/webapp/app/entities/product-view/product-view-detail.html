@@ -1,0 +1,106 @@
+
+<div>
+    <h2><span>Toote</span> {{vm.productView.code}}</h2>
+    <hr>
+    <div class="container-fluid">
+        <div class="row">
+    <dl class="dl-horizontal jh-entity-details col-sm-6">
+        <dt><span>Toote kood</span></dt>
+        <dd>
+            <span>{{vm.productView.code}}</span>
+        </dd>
+        <dt><span>Toote nimetus</span></dt>
+        <dd>
+            <span>{{vm.productView.name}}</span>
+        </dd>
+        <dt><span>Kirjeldus</span></dt>
+        <dd>
+            <span>{{vm.productView.description}}</span>
+        </dd>
+        <dt><span>Mõõtmed ja kaal</span></dt>
+        <dd></dd>
+        <dd>
+            <span></span>
+        </dd>
+        <dt><span>Kaal</span></dt>
+        <dd>
+            <span>{{vm.productView.weight}} kg</span>
+        </dd>
+        <dt><span>Kõrgus</span></dt>
+        <dd>
+            <span>{{vm.productView.height}} m</span>
+        </dd>
+        <dt><span>Pikkus</span></dt>
+        <dd>
+            <span>{{vm.productView.length}} m</span>
+        </dd>
+        <dt><span>Paksus</span></dt>
+        <dd>
+            <span>{{vm.productView.width}} m</span>
+        </dd>
+        <dt><span>Hind</span></dt>
+        <dd>
+            <span>{{vm.productView.price}} €</span>
+        </dd>
+        <dt><span></span></dt>
+        <dd>
+            <span>Soovitav inimestele vanuses alates {{vm.productView.minAge}} kuni {{vm.productView.maxAge}} aastani.</span>
+        </dd>
+        <dt><span></span></dt>
+        <dd>
+            <span></span>
+        </dd>
+        <dt><span>Registreerija</span></dt>
+        <dd>
+            <span>{{vm.productView.registratorName}} (<a href="mailto:{{vm.productView.registratorEmail}}">{{vm.productView.registratorEmail}}</a>)</span>
+        </dd>
+    </dl>
+
+    <dl class="dl-horizontal jh-entity-details col-sm-6">
+        <dt><span>Toote seisund</span></dt>
+        <dd ng-init="state = vm.productView.productState">
+            <span class="badge"
+                  ng-class="{
+                  'alert-warning': state === 'Ootel',
+                  'alert-success': state === 'Aktiivne',
+                  'alert-info': state === 'Mitteaktiivne',
+                  'alert-danger': state === 'Lõpetatud'
+                  }">{{vm.productView.productState}}</span>
+        </dd>
+        <dt><span>Tootja riik</span></dt>
+        <dd>
+            <span>{{vm.productView.countryName}}</span>
+        </dd>
+        <dd>
+            <span ng-if="!vm.productView.categories || vm.productView.categories.length === 0"><b>
+                Sellel tootel puuduvad tootekategooriad.
+            </b></span>
+            <span ng-if="vm.productView.categories || vm.productView.categories.length > 0">
+                <b>Toote kategooriad: </b>
+                <ul>
+                    <li ng-repeat="category in vm.productView.categories">{{category}}</li>
+                </ul>
+            </span>
+        </dd>
+        <dt><span>Pildi URL : </span></dt>
+        <dd>
+            <span><a href="{{vm.productView.imageURL}}">{{vm.productView.imageURL}}</a></span>
+        </dd>
+        <dd>
+            <img ng-src="{{vm.productView.imageURL}}" style="max-width:100%;">
+        </dd>
+        <dt><span>Loodud kuupäeval</span></dt>
+        <dd>
+            <span>{{vm.productView.registrationDate | date:'mediumDate'}}</span>
+        </dd>
+    </dl>
+</div>
+        <div class="row">
+    <button type="submit"
+            ui-sref="{{ vm.previousState }}"
+            class="btn btn-info">
+        <span class="glyphicon glyphicon-arrow-left"></span>&nbsp;<span> Tagasi toote nimekirja juurde</span>
+    </button>
+        </div>
+    </div>
+</div>

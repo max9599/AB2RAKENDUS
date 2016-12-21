@@ -20,11 +20,10 @@ public class Speciality implements Serializable {
 
     @Id
     @NotNull
-    @Column(name = "amet_kood", nullable = false, unique = true)
+    @Column(name = "amet_kood")
     private Integer code;
 
-    @NotNull
-    @Column(name = "nimetus", nullable = false)
+    @Column(name = "nimetus")
     private String name;
 
     @Column(name = "kirjeldus")

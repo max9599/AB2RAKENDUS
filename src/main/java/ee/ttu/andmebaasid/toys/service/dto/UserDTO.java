@@ -2,7 +2,6 @@ package ee.ttu.andmebaasid.toys.service.dto;
 
 import ee.ttu.andmebaasid.toys.config.Constants;
 
-import ee.ttu.andmebaasid.toys.domain.Authority;
 import ee.ttu.andmebaasid.toys.domain.User;
 
 import org.hibernate.validator.constraints.Email;
@@ -41,22 +40,16 @@ public class UserDTO {
     }
 
     public UserDTO(User user) {
-        this(user.getLogin(), user.getFirstName(), user.getLastName(),
-            user.getEmail(), user.getActivated(), user.getLangKey(),
-            user.getAuthorities().stream().map(Authority::getName)
-                .collect(Collectors.toSet()));
+        this(user.getFirstName(), user.getLastName(),
+            user.getEmail());
     }
 
-    public UserDTO(String login, String firstName, String lastName,
-        String email, boolean activated, String langKey, Set<String> authorities) {
+    public UserDTO(String firstName, String lastName,
+        String email) {
 
-        this.login = login;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-        this.activated = activated;
-        this.langKey = langKey;
-        this.authorities = authorities;
     }
 
     public String getLogin() {

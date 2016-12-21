@@ -1,6 +1,5 @@
 package ee.ttu.andmebaasid.toys.service.mapper;
 
-import ee.ttu.andmebaasid.toys.domain.Authority;
 import ee.ttu.andmebaasid.toys.domain.User;
 import ee.ttu.andmebaasid.toys.service.dto.UserDTO;
 import org.mapstruct.*;
@@ -41,16 +40,4 @@ public interface UserMapper {
         return user;
     }
 
-    default Set<String> stringsFromAuthorities (Set<Authority> authorities) {
-        return authorities.stream().map(Authority::getName)
-            .collect(Collectors.toSet());
-    }
-
-    default Set<Authority> authoritiesFromStrings(Set<String> strings) {
-        return strings.stream().map(string -> {
-            Authority auth = new Authority();
-            auth.setName(string);
-            return auth;
-        }).collect(Collectors.toSet());
-    }
 }

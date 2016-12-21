@@ -1,7 +1,5 @@
 package ee.ttu.andmebaasid.toys.domain;
 
-import ee.ttu.andmebaasid.toys.config.Constants;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -9,81 +7,71 @@ import org.hibernate.validator.constraints.Email;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
-import java.time.ZonedDateTime;
 
 /**
  * A user.
  */
 @Entity
-@Table(name = "jhi_user")
+@Table(name = "Isik")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class User extends AbstractAuditingEntity implements Serializable {
+public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "isik_id")
     private Long id;
-
-    @NotNull
-    @Pattern(regexp = Constants.LOGIN_REGEX)
-    @Size(min = 1, max = 50)
-    @Column(length = 50, unique = true, nullable = false)
-    private String login;
 
     @JsonIgnore
     @NotNull
-    @Size(min = 60, max = 60)
-    @Column(name = "password_hash",length = 60)
+    @Size(min = 10, max = 255)
+    @Column(name = "parool")
     private String password;
 
     @Size(max = 50)
-    @Column(name = "first_name", length = 50)
+    @Column(name = "eesnimi", length = 50)
     private String firstName;
 
     @Size(max = 50)
-    @Column(name = "last_name", length = 50)
+    @Column(name = "perenimi", length = 50)
     private String lastName;
 
-    @Email
-    @Size(max = 100)
-    @Column(length = 100, unique = true)
-    private String email;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
-    @NotNull
-    @Column(nullable = false)
-    private boolean activated = false;
+        User user = (User) o;
 
-    @Size(min = 2, max = 5)
-    @Column(name = "lang_key", length = 5)
-    private String langKey;
+        if (id != null ? !id.equals(user.id) : user.id != null) return false;
+        if (password != null ? !password.equals(user.password) : user.password != null) return false;
+        if (firstName != null ? !firstName.equals(user.firstName) : user.firstName != null) return false;
+        if (lastName != null ? !lastName.equals(user.lastName) : user.lastName != null) return false;
+        if (isikCode != null ? !isikCode.equals(user.isikCode) : user.isikCode != null) return false;
+        if (riikCode != null ? !riikCode.equals(user.riikCode) : user.riikCode != null) return false;
+        return email != null ? email.equals(user.email) : user.email == null;
 
-    @Size(max = 20)
-    @Column(name = "activation_key", length = 20)
-    @JsonIgnore
-    private String activationKey;
+    }
 
-    @Size(max = 20)
-    @Column(name = "reset_key", length = 20)
-    private String resetKey;
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (password != null ? password.hashCode() : 0);
+        result = 31 * result + (firstName != null ? firstName.hashCode() : 0);
+        result = 31 * result + (lastName != null ? lastName.hashCode() : 0);
+        result = 31 * result + (isikCode != null ? isikCode.hashCode() : 0);
+        result = 31 * result + (riikCode != null ? riikCode.hashCode() : 0);
+        result = 31 * result + (email != null ? email.hashCode() : 0);
+        return result;
+    }
 
-    @Column(name = "reset_date", nullable = true)
-    private ZonedDateTime resetDate = null;
+    @Size(max = 50)
 
-    @JsonIgnore
-    @ManyToMany
-    @JoinTable(
-        name = "jhi_user_authority",
-        joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
-        inverseJoinColumns = {@JoinColumn(name = "authority_name", referencedColumnName = "name")})
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private Set<Authority> authorities = new HashSet<>();
+    @Column(name = "isikukood", length = 50)
+    private String isikCode;
 
     public Long getId() {
         return id;
@@ -91,15 +79,6 @@ public class User extends AbstractAuditingEntity implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    //Lowercase the login before saving it in database
-    public void setLogin(String login) {
-        this.login = login.toLowerCase(Locale.ENGLISH);
     }
 
     public String getPassword() {
@@ -126,6 +105,22 @@ public class User extends AbstractAuditingEntity implements Serializable {
         this.lastName = lastName;
     }
 
+    public String getIsikCode() {
+        return isikCode;
+    }
+
+    public void setIsikCode(String isikCode) {
+        this.isikCode = isikCode;
+    }
+
+    public String getRiikCode() {
+        return riikCode;
+    }
+
+    public void setRiikCode(String riikCode) {
+        this.riikCode = riikCode;
+    }
+
     public String getEmail() {
         return email;
     }
@@ -134,87 +129,13 @@ public class User extends AbstractAuditingEntity implements Serializable {
         this.email = email;
     }
 
-    public boolean getActivated() {
-        return activated;
-    }
+    @Size(max = 3)
+    @Column(name = "riik_kood", length = 3)
+    private String riikCode;
 
-    public void setActivated(boolean activated) {
-        this.activated = activated;
-    }
+    @Email
+    @Size(max = 100)
+    @Column(name = "e_meil",length = 100, unique = true)
+    private String email;
 
-    public String getActivationKey() {
-        return activationKey;
-    }
-
-    public void setActivationKey(String activationKey) {
-        this.activationKey = activationKey;
-    }
-
-    public String getResetKey() {
-        return resetKey;
-    }
-
-    public void setResetKey(String resetKey) {
-        this.resetKey = resetKey;
-    }
-
-    public ZonedDateTime getResetDate() {
-       return resetDate;
-    }
-
-    public void setResetDate(ZonedDateTime resetDate) {
-       this.resetDate = resetDate;
-    }
-
-    public String getLangKey() {
-        return langKey;
-    }
-
-    public void setLangKey(String langKey) {
-        this.langKey = langKey;
-    }
-
-    public Set<Authority> getAuthorities() {
-        return authorities;
-    }
-
-    public void setAuthorities(Set<Authority> authorities) {
-        this.authorities = authorities;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        User user = (User) o;
-
-        if (!login.equals(user.login)) {
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return login.hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-            "login='" + login + '\'' +
-            ", firstName='" + firstName + '\'' +
-            ", lastName='" + lastName + '\'' +
-            ", email='" + email + '\'' +
-            ", activated='" + activated + '\'' +
-            ", langKey='" + langKey + '\'' +
-            ", activationKey='" + activationKey + '\'' +
-            "}";
-    }
 }

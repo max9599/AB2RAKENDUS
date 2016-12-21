@@ -72,15 +72,11 @@ public class TokenProvider {
             .parseClaimsJws(token)
             .getBody();
 
-        Collection<? extends GrantedAuthority> authorities =
-            Arrays.asList(claims.get(AUTHORITIES_KEY).toString().split(",")).stream()
-                .map(authority -> new SimpleGrantedAuthority(authority))
-                .collect(Collectors.toList());
 
         User principal = new User(claims.getSubject(), "",
-            authorities);
+            new ArrayList<>());
 
-        return new UsernamePasswordAuthenticationToken(principal, "", authorities);
+        return new UsernamePasswordAuthenticationToken(principal, "", new ArrayList<>());
     }
 
     public boolean validateToken(String authToken) {

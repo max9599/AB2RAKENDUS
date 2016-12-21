@@ -2,9 +2,7 @@ package ee.ttu.andmebaasid.toys.web.rest;
 
 import ee.ttu.andmebaasid.toys.ToysApp;
 import ee.ttu.andmebaasid.toys.config.JHipsterProperties;
-import ee.ttu.andmebaasid.toys.domain.Authority;
 import ee.ttu.andmebaasid.toys.domain.User;
-import ee.ttu.andmebaasid.toys.repository.AuthorityRepository;
 import ee.ttu.andmebaasid.toys.repository.UserRepository;
 import ee.ttu.andmebaasid.toys.security.AuthoritiesConstants;
 import ee.ttu.andmebaasid.toys.service.MailService;
@@ -50,10 +48,6 @@ public class AccountResourceIntTest {
 
     @Inject
     private UserRepository userRepository;
-
-    @Inject
-    private AuthorityRepository authorityRepository;
-
     @Inject
     private UserService userService;
 
@@ -66,26 +60,6 @@ public class AccountResourceIntTest {
     private MockMvc restUserMockMvc;
 
     private MockMvc restMvc;
-
-    @Before
-    public void setup() {
-        MockitoAnnotations.initMocks(this);
-        doNothing().when(mockMailService).sendActivationEmail((User) anyObject(), anyString());
-
-        AccountResource accountResource = new AccountResource();
-        ReflectionTestUtils.setField(accountResource, "jHipsterProperties", jHipsterProperties);
-        ReflectionTestUtils.setField(accountResource, "userRepository", userRepository);
-        ReflectionTestUtils.setField(accountResource, "userService", userService);
-        ReflectionTestUtils.setField(accountResource, "mailService", mockMailService);
-
-        AccountResource accountUserMockResource = new AccountResource();
-        ReflectionTestUtils.setField(accountUserMockResource, "userRepository", userRepository);
-        ReflectionTestUtils.setField(accountUserMockResource, "userService", mockUserService);
-        ReflectionTestUtils.setField(accountUserMockResource, "mailService", mockMailService);
-
-        this.restMvc = MockMvcBuilders.standaloneSetup(accountResource).build();
-        this.restUserMockMvc = MockMvcBuilders.standaloneSetup(accountUserMockResource).build();
-    }
 
     @Test
     public void testNonAuthenticatedUser() throws Exception {
@@ -107,31 +81,6 @@ public class AccountResourceIntTest {
                 .andExpect(content().string("test"));
     }
 
-    @Test
-    public void testGetExistingAccount() throws Exception {
-        Set<Authority> authorities = new HashSet<>();
-        Authority authority = new Authority();
-        authority.setName(AuthoritiesConstants.ADMIN);
-        authorities.add(authority);
-
-        User user = new User();
-        user.setLogin("test");
-        user.setFirstName("john");
-        user.setLastName("doe");
-        user.setEmail("john.doe@jhipter.com");
-        user.setAuthorities(authorities);
-        when(mockUserService.getUserWithAuthorities()).thenReturn(user);
-
-        restUserMockMvc.perform(get("/api/account")
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-                .andExpect(jsonPath("$.login").value("test"))
-                .andExpect(jsonPath("$.firstName").value("john"))
-                .andExpect(jsonPath("$.lastName").value("doe"))
-                .andExpect(jsonPath("$.email").value("john.doe@jhipter.com"))
-                .andExpect(jsonPath("$.authorities").value(AuthoritiesConstants.ADMIN));
-    }
 
     @Test
     public void testGetUnknownAccount() throws Exception {
@@ -167,7 +116,7 @@ public class AccountResourceIntTest {
                 .content(TestUtil.convertObjectToJsonBytes(validUser)))
             .andExpect(status().isCreated());
 
-        Optional<User> user = userRepository.findOneByLogin("joe");
+        Optional<User> user = userRepository.findOneByEmail("joe");
         assertThat(user.isPresent()).isTrue();
     }
 
@@ -225,7 +174,7 @@ public class AccountResourceIntTest {
                 .content(TestUtil.convertObjectToJsonBytes(invalidUser)))
             .andExpect(status().isBadRequest());
 
-        Optional<User> user = userRepository.findOneByLogin("bob");
+        Optional<User> user = userRepository.findOneByEmail("bob");
         assertThat(user.isPresent()).isFalse();
     }
 
@@ -254,7 +203,7 @@ public class AccountResourceIntTest {
                 .content(TestUtil.convertObjectToJsonBytes(invalidUser)))
             .andExpect(status().isBadRequest());
 
-        Optional<User> user = userRepository.findOneByLogin("bob");
+        Optional<User> user = userRepository.findOneByEmail("bob");
         assertThat(user.isPresent()).isFalse();
     }
 
@@ -338,61 +287,8 @@ public class AccountResourceIntTest {
                 .content(TestUtil.convertObjectToJsonBytes(duplicatedUser)))
             .andExpect(status().is4xxClientError());
 
-        Optional<User> userDup = userRepository.findOneByLogin("johnjr");
+        Optional<User> userDup = userRepository.findOneByEmail("johnjr");
         assertThat(userDup.isPresent()).isFalse();
     }
 
-    @Test
-    @Transactional
-    public void testRegisterAdminIsIgnored() throws Exception {
-        ManagedUserVM validUser = new ManagedUserVM(
-            null,                   // id
-            "badguy",               // login
-            "password",             // password
-            "Bad",                  // firstName
-            "Guy",                  // lastName
-            "badguy@example.com",   // e-mail
-            true,                   // activated
-            "en",                   // langKey
-            new HashSet<>(Arrays.asList(AuthoritiesConstants.ADMIN)),
-            null,                   // createdBy
-            null,                   // createdDate
-            null,                   // lastModifiedBy
-            null                    // lastModifiedDate
-        );
-
-        restMvc.perform(
-            post("/api/register")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8)
-                .content(TestUtil.convertObjectToJsonBytes(validUser)))
-            .andExpect(status().isCreated());
-
-        Optional<User> userDup = userRepository.findOneByLogin("badguy");
-        assertThat(userDup.isPresent()).isTrue();
-        assertThat(userDup.get().getAuthorities()).hasSize(1)
-            .containsExactly(authorityRepository.findOne(AuthoritiesConstants.USER));
-    }
-
-    @Test
-    @Transactional
-    public void testSaveInvalidLogin() throws Exception {
-        UserDTO invalidUser = new UserDTO(
-            "funky-log!n",          // login <-- invalid
-            "Funky",                // firstName
-            "One",                  // lastName
-            "funky@example.com",    // e-mail
-            true,                   // activated
-            "en",                   // langKey
-            new HashSet<>(Arrays.asList(AuthoritiesConstants.USER))
-        );
-
-        restUserMockMvc.perform(
-            post("/api/account")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8)
-                .content(TestUtil.convertObjectToJsonBytes(invalidUser)))
-            .andExpect(status().isBadRequest());
-
-        Optional<User> user = userRepository.findOneByEmail("funky@example.com");
-        assertThat(user.isPresent()).isFalse();
-    }
 }

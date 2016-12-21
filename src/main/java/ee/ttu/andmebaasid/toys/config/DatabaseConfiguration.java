@@ -22,7 +22,6 @@ import java.sql.SQLException;
 
 @Configuration
 @EnableJpaRepositories("ee.ttu.andmebaasid.toys.repository")
-@EnableJpaAuditing(auditorAwareRef = "springSecurityAuditorAware")
 @EnableTransactionManagement
 public class DatabaseConfiguration {
 

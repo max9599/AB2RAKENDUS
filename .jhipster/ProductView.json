@@ -1,0 +1,72 @@
+{
+    "fluentMethods": true,
+    "relationships": [],
+    "fields": [
+        {
+            "fieldName": "code",
+            "fieldType": "String",
+            "fieldValidateRules": []
+        },
+        {
+            "fieldName": "name",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "description",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "weight",
+            "fieldType": "Double"
+        },
+        {
+            "fieldName": "height",
+            "fieldType": "Double"
+        },
+        {
+            "fieldName": "length",
+            "fieldType": "Double"
+        },
+        {
+            "fieldName": "width",
+            "fieldType": "Double"
+        },
+        {
+            "fieldName": "price",
+            "fieldType": "Double"
+        },
+        {
+            "fieldName": "minAge",
+            "fieldType": "Integer"
+        },
+        {
+            "fieldName": "maxAge",
+            "fieldType": "Integer"
+        },
+        {
+            "fieldName": "countryName",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "imageURL",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "registrationDate",
+            "fieldType": "LocalDate"
+        },
+        {
+            "fieldName": "productState",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "registratorName",
+            "fieldType": "String"
+        }
+    ],
+    "changelogDate": "20161128064702",
+    "dto": "no",
+    "service": "no",
+    "entityTableName": "product_view",
+    "pagination": "pager"
+}

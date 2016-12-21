@@ -21,6 +21,15 @@ public final class Constants {
 
     public static final String SYSTEM_ACCOUNT = "system";
 
+    // Apex.ttu.ee credentials
+    public static final String LOCALHOST = "tomcat-wappl.rhcloud.com";
+    public static final String APEX_REMOTE_HOST = "apex.ttu.ee";
+    public static final String APEX_REMOTE_USER = "t142686";
+    public static final String APEX_REMOTE_PASS = "null"; //TODO change this!
+    public static final int APEX_REMOTE_PORT = 22;
+    public static final int APEX_FORWARD_PORT = 5432;
+    public static final int LOCAL_FORWARD_PORT = 65533;
+
     private Constants() {
     }
 }
